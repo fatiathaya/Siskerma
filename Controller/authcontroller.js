@@ -17,11 +17,17 @@ try {
     const identifier = email || username;
     const user = await User.findOne({ where: { email: identifier } });
     if (!user) {
+    if (req.xhr || (req.headers && typeof req.headers["accept"] === "string" && req.headers["accept"].includes("application/json"))) {
+        return res.status(400).json({ error: "User tidak ditemukan" });
+    }
     return res.render("login", { error: "User tidak ditemukan" });
     }
 
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) {
+    if (req.xhr || (req.headers && typeof req.headers["accept"] === "string" && req.headers["accept"].includes("application/json"))) {
+        return res.status(400).json({ error: "Password salah" });
+    }
     return res.render("login", { error: "Password salah" });
     }
 
@@ -34,15 +40,24 @@ try {
     };
 
     // Redirect sesuai role
+    if (req.xhr || (req.headers && typeof req.headers["accept"] === "string" && req.headers["accept"].includes("application/json"))) {
+        const redirect = user.role === "superadmin"
+            ? "/dashboard/superadmin"
+            : (user.role === "admin" ? "/dashboard/admin" : "/dashboarduser");
+        return res.json({ success: true, redirect });
+    }
     if (user.role === "superadmin") {
-    return res.redirect("/dashboard/superadmin");
+        return res.redirect("/dashboard/superadmin");
     } else if (user.role === "admin") {
-    return res.redirect("/dashboard/admin");
+        return res.redirect("/dashboard/admin");
     } else {
-    return res.redirect("/dashboarduser");
+        return res.redirect("/dashboarduser");
     }
 } catch (err) {
     console.error(err);
+    if (req.xhr || (req.headers && typeof req.headers["accept"] === "string" && req.headers["accept"].includes("application/json"))) {
+        return res.status(500).json({ error: "Terjadi kesalahan" });
+    }
     res.render("login", { error: "Terjadi kesalahan" });
 }
 };
