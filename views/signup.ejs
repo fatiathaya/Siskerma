@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daftar Akun - Universitas Andalas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-green-100 via-white to-blue-100 flex items-center justify-center min-h-screen">
+
+  <div class="w-full max-w-xl">
+    <div class="flex flex-col items-center mb-6 animate-fadeIn">
+      <img src="/image/Logo_Unand.svg.png" alt="Logo Unand" class="w-20 h-20 mb-3 drop-shadow-md" onerror="this.src='/image/logo.png'">
+      <h1 class="text-center text-sm leading-tight">
+        <span class="block text-orange-600 font-semibold">Direktorat Kerjasama</span>
+        <span class="block text-orange-600 font-semibold">dan Hilirisasi Riset</span>
+        <span class="block text-green-700 font-bold">Universitas Andalas</span>
+      </h1>
+    </div>
+
+    <div id="alertBox" class="hidden mb-4 p-3 rounded-lg text-sm font-medium"></div>
+
+    <div class="bg-white/80 backdrop-blur-md p-8 rounded-2xl shadow-xl border border-gray-200 animate-slideUp">
+      <div class="mb-4">
+        <div class="text-2xl font-bold">Buat Akun</div>
+        <p class="text-gray-600 text-sm">Isi data di bawah untuk mendaftar.</p>
+      </div>
+
+      <% if (locals.error) { %>
+        <div class="mb-4 p-3 rounded-md text-sm bg-red-100 text-red-700 border border-red-300"><%= error %></div>
+      <% } %>
+
+      <form id="signupForm" action="/auth/signup" method="POST" class="space-y-4" novalidate>
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Lengkap</label>
+          <input id="name" name="name" type="text" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="Nama lengkap" required>
+          <p id="errName" class="mt-1 text-xs text-red-600 hidden"></p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Email</label>
+            <input id="email" name="email" type="email" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="contoh@unand.ac.id" required>
+            <p id="errEmail" class="mt-1 text-xs text-red-600 hidden"></p>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">No. Kontak</label>
+            <input id="phone" name="phone" type="text" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="08xxxxxxxxxx">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Password</label>
+            <div class="relative">
+              <input id="password" name="password" type="password" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="Minimal 6 karakter" required>
+              <button type="button" id="togglePassword" class="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-green-600">👁</button>
+            </div>
+            <p class="text-xs text-gray-500 mt-1">Gunakan kombinasi huruf dan angka.</p>
+            <p id="errPass" class="mt-1 text-xs text-red-600 hidden"></p>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Konfirmasi Password</label>
+            <div class="relative">
+              <input id="password2" type="password" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="Ulangi password" required>
+              <button type="button" id="togglePassword2" class="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-green-600">👁</button>
+            </div>
+            <p id="errPass2" class="mt-1 text-xs text-red-600 hidden"></p>
+          </div>
+        </div>
+
+        <button id="submitBtn" type="submit" class="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white py-2 rounded-lg font-semibold shadow-md transition transform hover:scale-[1.01] disabled:opacity-60" disabled>
+          Daftar
+        </button>
+      </form>
+
+      <p class="mt-4 text-sm text-right">Sudah punya akun? <a href="/auth/login" class="text-blue-600 hover:underline">Login</a></p>
+    </div>
+  </div>
+
+  <script>
+    const nameEl = document.getElementById('name');
+    const emailEl = document.getElementById('email');
+    const passEl = document.getElementById('password');
+    const pass2El = document.getElementById('password2');
+    const errName = document.getElementById('errName');
+    const errEmail = document.getElementById('errEmail');
+    const errPass = document.getElementById('errPass');
+    const errPass2 = document.getElementById('errPass2');
+    const btn = document.getElementById('submitBtn');
+    const alertBox = document.getElementById('alertBox');
+    const toggle1 = document.getElementById('togglePassword');
+    const toggle2 = document.getElementById('togglePassword2');
+    const form = document.getElementById('signupForm');
+
+    function showAlert(message, type) {
+      alertBox.textContent = message;
+      alertBox.className = 'mb-4 p-3 rounded-lg text-sm font-medium';
+      if (type === 'error') {
+        alertBox.classList.add('bg-red-100','text-red-700','border','border-red-300');
+      } else {
+        alertBox.classList.add('bg-green-100','text-green-700','border','border-green-300');
+      }
+      alertBox.classList.remove('hidden');
+      setTimeout(()=>alertBox.classList.add('hidden'), 3000);
+    }
+
+    function validEmail(v){ return /.+@.+\..+/.test(v); }
+    function sync(){
+      const nameOk = nameEl.value.trim().length>1;
+      const emailOk = validEmail(emailEl.value.trim());
+      const passOk = passEl.value.trim().length>=6;
+      const pass2Ok = passEl.value === pass2El.value && pass2El.value.trim().length>0;
+
+      // tampilkan pesan
+      errName.textContent = nameOk ? '' : 'Nama minimal 2 karakter.';
+      errEmail.textContent = emailOk ? '' : 'Format email tidak valid.';
+      errPass.textContent = passOk ? '' : 'Password minimal 6 karakter.';
+      errPass2.textContent = pass2Ok ? '' : 'Konfirmasi password tidak cocok.';
+      errName.classList.toggle('hidden', nameOk);
+      errEmail.classList.toggle('hidden', emailOk);
+      errPass.classList.toggle('hidden', passOk);
+      errPass2.classList.toggle('hidden', pass2Ok);
+
+      // border merah pada invalid
+      nameEl.classList.toggle('border-red-500', !nameOk);
+      emailEl.classList.toggle('border-red-500', !emailOk);
+      passEl.classList.toggle('border-red-500', !passOk);
+      pass2El.classList.toggle('border-red-500', !pass2Ok);
+
+      btn.disabled = !(nameOk && emailOk && passOk && pass2Ok);
+    }
+    nameEl.addEventListener('input', sync);
+    emailEl.addEventListener('input', sync);
+    passEl.addEventListener('input', sync);
+    pass2El.addEventListener('input', sync);
+    sync();
+
+    toggle1.addEventListener('click', ()=>{
+      const isPwd = passEl.type==='password';
+      passEl.type = isPwd? 'text':'password';
+      toggle1.textContent = isPwd? '🙈':'👁';
+    });
+    toggle2.addEventListener('click', ()=>{
+      const isPwd = pass2El.type==='password';
+      pass2El.type = isPwd? 'text':'password';
+      toggle2.textContent = isPwd? '🙈':'👁';
+    });
+
+    form.addEventListener('submit', function(e){
+      if (btn.disabled){
+        e.preventDefault();
+        sync();
+        showAlert('Periksa kembali isian Anda. Masih ada yang belum valid.','error');
+      }
+    });
+  </script>
+
+  <style>
+    @keyframes fadeIn { from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    .animate-fadeIn { animation: fadeIn .6s ease-in-out }
+    .animate-slideUp { animation: slideUp .7s ease-in-out }
+  </style>
+
+</body>
+</html>
+
+

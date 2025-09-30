@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Pengaju</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+
+  <!-- Header -->
+  <header class="flex items-center justify-between p-4 bg-green-700 text-white shadow sticky top-0 z-50">
+    <div class="flex items-center space-x-3">
+      <img src="/image/Logo_Unand.svg.png" alt="Logo" 
+           class="w-12 h-12" 
+           onerror="this.src='/image/logo.png'">
+      <div>
+        <h1 class="font-bold text-lg leading-tight">Direktorat Kerjasama</h1>
+        <h2 class="font-bold text-yellow-300 text-sm">dan Hilirisasi Riset</h2>
+        <h3 class="font-semibold text-sm">Universitas Andalas</h3>
+      </div>
+    </div>
+
+    <!-- Profile Button + Dropdown -->
+    <div class="relative">
+      <button id="profileBtn" class="flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-yellow-300 rounded-full transition">
+        <img src="/image/logoprogil.jpg" 
+             alt="User" 
+             class="w-10 h-10 rounded-full border-2 border-white">
+        <span class="hidden md:inline font-medium"><%= (user && user.name) ? user.name : 'Pengaju' %></span>
+        <svg class="w-4 h-4 ml-1 transition-transform duration-300" id="arrowIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        </svg>
+      </button>
+
+      <!-- Dropdown -->
+      <div id="profileMenu" 
+           class="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-lg p-4 hidden transition transform origin-top scale-95">
+        <div class="flex items-center space-x-3">
+          <img src="/image/logoprogil.jpg" alt="User" class="w-12 h-12 rounded-full">
+          <div>
+            <p class="font-bold text-gray-800"><%= (user && user.name) ? user.name : 'Pengaju' %></p>
+            <p class="text-sm text-gray-500"><%= (user && user.email) ? user.email : '-' %></p>
+          </div>
+        </div>
+        <hr class="my-3 border-gray-200">
+        <a href="/profile/edit" class="block w-full text-center bg-gray-200 text-gray-700 px-4 py-2 rounded-lg mb-2 hover:bg-gray-300 transition">Edit Profil</a>
+        <a href="/auth/logout" 
+           class="block text-center w-full bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition">Logout</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="flex">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="w-64 bg-green-800 text-white min-h-screen transition-all duration-300">
+      <ul class="mt-6 space-y-2">
+        <li class="px-6 py-2 bg-green-900 font-bold flex items-center justify-between cursor-default">
+          Dashboard
+          <button id="toggleSidebar" class="md:hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </li>
+        <li class="px-6 py-2 hover:bg-green-700 rounded"><a href="/pengajuan" class="flex items-center gap-2"><i data-feather="file-text" class="w-4 h-4"></i> Pengajuan</a></li>
+        <li class="px-6 py-2 hover:bg-green-700 rounded"><a href="/status" class="flex items-center gap-2"><i data-feather="check-square" class="w-4 h-4"></i> Status</a></li>
+        <li class="px-6 py-2 hover:bg-green-700 rounded"><a href="/faq" class="flex items-center gap-2"><i data-feather="help-circle" class="w-4 h-4"></i> FAQ</a></li>
+        <li class="px-6 py-2 hover:bg-green-700 rounded"><a href="/tentang" class="flex items-center gap-2"><i data-feather="info" class="w-4 h-4"></i> Tentang Kami</a></li>
+      </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-8 space-y-6">
+      <h2 class="text-2xl font-bold text-gray-700">Selamat Datang, <%= (user && user.name) ? user.name : 'Pengaju' %>!</h2>
+      
+      <!-- Contoh Card -->
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+          <h3 class="font-bold text-gray-800 text-lg">Pengajuan Terbaru</h3>
+          <p class="text-gray-500 mt-2">Cek status pengajuan terbaru Anda.</p>
+          <a href="/pengajuan" class="mt-4 inline-block text-green-700 font-semibold hover:underline">Lihat Pengajuan &rarr;</a>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+          <h3 class="font-bold text-gray-800 text-lg">Status Pengajuan</h3>
+          <p class="text-gray-500 mt-2">Pantau status pengajuan yang sedang diproses.</p>
+          <a href="/status" class="mt-4 inline-block text-green-700 font-semibold hover:underline">Cek Status &rarr;</a>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+          <h3 class="font-bold text-gray-800 text-lg">FAQ & Bantuan</h3>
+          <p class="text-gray-500 mt-2">Temukan jawaban atas pertanyaan umum.</p>
+          <a href="/faq" class="mt-4 inline-block text-green-700 font-semibold hover:underline">Buka FAQ &rarr;</a>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Script -->
+  <script>
+    feather.replace();
+
+    const profileBtn = document.getElementById("profileBtn");
+    const profileMenu = document.getElementById("profileMenu");
+    const arrowIcon = document.getElementById("arrowIcon");
+
+    profileBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      profileMenu.classList.toggle("hidden");
+      arrowIcon.classList.toggle("rotate-180");
+    });
+
+    window.addEventListener("click", function(e) {
+      if (!profileBtn.contains(e.target) && !profileMenu.contains(e.target)) {
+        profileMenu.classList.add("hidden");
+        arrowIcon.classList.remove("rotate-180");
+      }
+    });
+
+    // Sidebar toggle for mobile
+    const sidebar = document.getElementById("sidebar");
+    const toggleSidebar = document.getElementById("toggleSidebar");
+    toggleSidebar?.addEventListener("click", () => {
+      sidebar.classList.toggle("-translate-x-64");
+    });
+  </script>
+</body>
+</html>

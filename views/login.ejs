@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Universitas Andalas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-green-100 via-white to-blue-100 flex items-center justify-center min-h-screen">
+
+  <!-- Container -->
+  <div class="w-full max-w-md">
+    
+    <!-- Logo dan Header -->
+    <div class="flex flex-col items-center mb-6 animate-fadeIn">
+      <img src="/image/Logo_Unand.svg.png" 
+           alt="Logo Unand" class="w-20 h-20 mb-3 drop-shadow-md" onerror="this.src='/image/logo.png'">
+      <h1 class="text-center text-sm leading-tight">
+        <span class="block text-orange-600 font-semibold">Direktorat Kerjasama</span>
+        <span class="block text-orange-600 font-semibold">dan Hilirisasi Riset</span>
+        <span class="block text-green-700 font-bold">Universitas Andalas</span>
+      </h1>
+    </div>
+
+    <!-- Alert (hidden by default) -->
+    <div id="alertBox" class="hidden mb-4 p-3 rounded-lg text-sm font-medium"></div>
+
+    <!-- Form Card -->
+    <div class="bg-white/80 backdrop-blur-md p-8 rounded-2xl shadow-xl border border-gray-200 animate-slideUp">
+      <form id="loginForm" action="/auth/login" method="POST" class="space-y-5">
+
+        <!-- Username -->
+        <div>
+          <label for="username" class="block text-sm font-bold text-gray-700 mb-1">Username</label>
+          <input type="text" id="username" name="username" 
+                 class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition"
+                 placeholder="Masukkan username">
+        </div>
+
+        <!-- Password -->
+        <div>
+          <label for="password" class="block text-sm font-bold text-gray-700 mb-1">Password</label>
+          <div class="relative">
+            <input type="password" id="password" name="password"
+                   class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition"
+                   placeholder="Masukkan password">
+            <button type="button" id="togglePassword" 
+                    class="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-green-600 transition">
+              👁
+            </button>
+          </div>
+        </div>
+
+        <!-- Sign Up -->
+        <div class="text-right">
+          <a href="/auth/signup" class="text-sm text-blue-600 hover:underline">Sign Up</a>
+        </div>
+
+        <!-- Sign In Button -->
+        <button type="submit"
+                class="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white py-2 rounded-lg font-semibold shadow-md transition transform hover:scale-[1.02]">
+          Sign In
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Script interaktif -->
+  <script>
+    const togglePassword = document.getElementById("togglePassword");
+    const passwordInput = document.getElementById("password");
+    const loginForm = document.getElementById("loginForm");
+    const alertBox = document.getElementById("alertBox");
+
+    // Toggle show/hide password
+    togglePassword.addEventListener("click", function() {
+      if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        this.textContent = "🙈";
+      } else {
+        passwordInput.type = "password";
+        this.textContent = "👁";
+      }
+    });
+
+    // Show alert function
+    function showAlert(message, type) {
+      alertBox.textContent = message;
+      alertBox.className = "mb-4 p-3 rounded-lg text-sm font-medium animate-fadeIn";
+      if (type === "error") {
+        alertBox.classList.add("bg-red-100", "text-red-700", "border", "border-red-300");
+      } else if (type === "success") {
+        alertBox.classList.add("bg-green-100", "text-green-700", "border", "border-green-300");
+      }
+      alertBox.classList.remove("hidden");
+      setTimeout(() => alertBox.classList.add("hidden"), 3000);
+    }
+
+  // Validasi form (hanya cegah submit jika invalid)
+  loginForm.addEventListener("submit", function(e) {
+      const username = document.getElementById("username").value.trim();
+      const password = passwordInput.value.trim();
+
+      if (!username || !password) {
+        showAlert("Username dan Password wajib diisi!", "error");
+      e.preventDefault();
+      return false;
+      }
+    // jika valid, biarkan form submit ke /auth/login
+    });
+  </script>
+
+  <!-- Animations -->
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fadeIn { animation: fadeIn 0.6s ease-in-out; }
+    .animate-slideUp { animation: slideUp 0.7s ease-in-out; }
+  </style>
+
+</body>
+</html>
